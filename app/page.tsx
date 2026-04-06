@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useState, useEffect } from "react";
 
 type Client = {
@@ -176,7 +176,7 @@ export default function Home() {
   const adminDeleteClient = (clientId: string, clientName: string) => {
     if (confirm(`Permanently delete client "${clientName}"? This cannot be undone.`)) {
       const updated = clients.filter(c => c.id !== clientId);
-      saveClients(updated);
+      saveClients(updated as any);
       addActivity("admin", "Admin", clientName, "Deleted client", `Permanently deleted client "${clientName}"`);
       alert("Client deleted.");
     }
@@ -184,7 +184,7 @@ export default function Home() {
 
   const adminArchiveClient = (clientId: string, archive: boolean) => {
     const updated = clients.map(c => c.id === clientId ? { ...c, archived: archive } : c);
-    saveClients(updated);
+    saveClients(updated as any);
     const client = clients.find(c => c.id === clientId);
     if (client) {
       const staff = staffList.find(s => s.code === client.assignedStaffCode);
@@ -201,7 +201,7 @@ export default function Home() {
       }
       return c;
     });
-    saveClients(updated);
+    saveClients(updated as any);
     const client = clients.find(c => c.id === clientId);
     if (client) {
       const staff = staffList.find(s => s.code === client.assignedStaffCode);
@@ -228,7 +228,7 @@ export default function Home() {
 
   const staffArchiveClient = (clientId: string, archive: boolean) => {
     const updated = clients.map(c => c.id === clientId ? { ...c, archived: archive } : c);
-    saveClients(updated);
+    saveClients(updated as any);
     const client = clients.find(c => c.id === clientId);
     if (client) {
       addActivity(user?.code || "unknown", user?.name || "unknown", client.name, archive ? "Archived client" : "Unarchived client", `Client ${archive ? "archived" : "unarchived"}`);
@@ -244,7 +244,7 @@ export default function Home() {
         ...c,
         documents: [...c.documents, { name: file.name, dataUrl: reader.result as string }]
       } : c);
-      saveClients(updated);
+      saveClients(updated as any);
       setUploadFile(prev => ({ ...prev, [clientId]: null }));
       const client = clients.find(c => c.id === clientId);
       if (client) {
@@ -262,7 +262,7 @@ export default function Home() {
       ...c,
       requests: [...c.requests, { text, date: new Date().toISOString(), status: "pending" }]
     } : c);
-    saveClients(updated);
+    saveClients(updated as any);
     setRequestText(prev => ({ ...prev, [clientId]: "" }));
     const client = clients.find(c => c.id === clientId);
     if (client) {
@@ -274,9 +274,9 @@ export default function Home() {
   const runSimpleAI = (clientId: string, clientName: string) => {
     const random = Math.random();
     let result = "";
-    if (random > 0.7) result = `✅ High approval chance (${Math.round(random*100)}%) – strong case.`;
-    else if (random > 0.4) result = `⚠️ Medium chance (${Math.round(random*100)}%) – need more documents.`;
-    else result = `❌ Low chance (${Math.round(random*100)}%) – consider legal advice.`;
+    if (random > 0.7) result = `âœ… High approval chance (${Math.round(random*100)}%) â€“ strong case.`;
+    else if (random > 0.4) result = `âš ï¸ Medium chance (${Math.round(random*100)}%) â€“ need more documents.`;
+    else result = `âŒ Low chance (${Math.round(random*100)}%) â€“ consider legal advice.`;
     setAiResult(prev => ({ ...prev, [clientId]: result }));
     addActivity(user?.code || "unknown", user?.name || "unknown", clientName, "AI analysis", result);
   };
@@ -319,7 +319,7 @@ export default function Home() {
               {activeClients.map(c => (
                 <div key={c.id} className="border border-gray-700 mb-3 rounded overflow-hidden">
                   <div className="flex justify-between items-center p-3 bg-gray-800 cursor-pointer" onClick={() => setExpandedClient(expandedClient === c.id ? null : c.id)}>
-                    <div><strong>{c.name}</strong> – Staff: {c.assignedStaffCode} – Status: {c.status}</div>
+                    <div><strong>{c.name}</strong> â€“ Staff: {c.assignedStaffCode} â€“ Status: {c.status}</div>
                     <div className="flex gap-2">
                       <button onClick={(e) => { e.stopPropagation(); adminArchiveClient(c.id, true); }} className="bg-yellow-600 px-2 py-1 rounded text-sm">Archive</button>
                       <button onClick={(e) => { e.stopPropagation(); adminDeleteClient(c.id, c.name); }} className="bg-red-700 px-2 py-1 rounded text-sm">Delete</button>
@@ -330,7 +330,7 @@ export default function Home() {
                       <div>
                         <p className="text-green-400 font-semibold">Documents:</p>
                         {c.documents.length === 0 && <p className="text-xs text-gray-500">None</p>}
-                        {c.documents.map((doc, idx) => (<a key={idx} href={doc.dataUrl} download={doc.name} className="text-xs text-blue-400 block">📄 {doc.name}</a>))}
+                        {c.documents.map((doc, idx) => (<a key={idx} href={doc.dataUrl} download={doc.name} className="text-xs text-blue-400 block">ðŸ“„ {doc.name}</a>))}
                       </div>
                       <div>
                         <p className="text-green-400 font-semibold">Requests from Staff:</p>
@@ -359,7 +359,7 @@ export default function Home() {
                 <h2 className="text-xl text-gray-400 mb-4">Archived Clients ({archivedClients.length})</h2>
                 {archivedClients.map(c => (
                   <div key={c.id} className="border border-gray-700 p-2 rounded flex justify-between items-center mb-2">
-                    <div><strong>{c.name}</strong> – Staff: {c.assignedStaffCode}</div>
+                    <div><strong>{c.name}</strong> â€“ Staff: {c.assignedStaffCode}</div>
                     <div className="flex gap-2">
                       <button onClick={() => adminArchiveClient(c.id, false)} className="bg-yellow-600 px-2 py-1 rounded text-sm">Unarchive</button>
                       <button onClick={() => adminDeleteClient(c.id, c.name)} className="bg-red-700 px-2 py-1 rounded text-sm">Delete</button>
@@ -378,7 +378,7 @@ export default function Home() {
             <div className="space-y-2 max-h-96 overflow-y-auto">
               {activities.map(a => (
                 <div key={a.id} className="border-b border-gray-700 pb-2">
-                  <p className="text-sm"><span className="text-green-400">{a.staffName}</span> ({a.staffCode}) – <span className="text-yellow-400">{a.action}</span> on client <strong>{a.clientName}</strong></p>
+                  <p className="text-sm"><span className="text-green-400">{a.staffName}</span> ({a.staffCode}) â€“ <span className="text-yellow-400">{a.action}</span> on client <strong>{a.clientName}</strong></p>
                   <p className="text-xs text-gray-500">{new Date(a.timestamp).toLocaleString()}</p>
                   <p className="text-xs text-gray-400">{a.details}</p>
                 </div>
@@ -448,7 +448,7 @@ export default function Home() {
             <div className="mt-2">
               <p className="text-sm text-green-400">Documents:</p>
               {c.documents.length === 0 && <p className="text-xs text-gray-500">None</p>}
-              {c.documents.map((doc, idx) => (<a key={idx} href={doc.dataUrl} download={doc.name} className="text-xs text-blue-400 block">📄 {doc.name}</a>))}
+              {c.documents.map((doc, idx) => (<a key={idx} href={doc.dataUrl} download={doc.name} className="text-xs text-blue-400 block">ðŸ“„ {doc.name}</a>))}
               <input type="file" onChange={(e) => setUploadFile(prev => ({ ...prev, [c.id]: e.target.files?.[0] || null }))} className="mt-1 text-xs" />
               <button onClick={() => uploadDocument(c.id)} disabled={!uploadFile[c.id]} className="bg-blue-600 px-2 py-1 rounded text-xs mt-1">Upload</button>
             </div>
@@ -471,7 +471,7 @@ export default function Home() {
           <h2 className="text-xl text-gray-400 mb-2">Archived Clients</h2>
           {myArchived.map(c => (
             <div key={c.id} className="border border-gray-700 p-2 rounded mb-2">
-              <p><strong>{c.name}</strong> – Status: {c.status}</p>
+              <p><strong>{c.name}</strong> â€“ Status: {c.status}</p>
               <button onClick={() => staffArchiveClient(c.id, false)} className="text-yellow-400 text-xs">Unarchive</button>
             </div>
           ))}
@@ -480,3 +480,7 @@ export default function Home() {
     </div>
   );
 }
+
+
+
+
